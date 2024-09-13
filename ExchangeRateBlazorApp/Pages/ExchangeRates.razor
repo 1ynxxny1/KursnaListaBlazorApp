@@ -1,0 +1,48 @@
+﻿@using ExchangeRateBlazorApp.Models
+@using ExchangeRateBlazorApp.Services
+
+@page "/exchange-rates"
+@inject KursnaListaService KursnaListaService
+
+<h3>Exchange Rates for @Date</h3>
+
+@if (exchangeRateList == null)
+{
+    <p>Loading...</p>
+}
+else if (exchangeRateList.Count == 0)
+{
+    <p>No exchange rates available for today.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Country</th>
+                <th>Currency</th>
+                <th>Middle Rate (MKD)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rate in exchangeRateList)
+            {
+                <tr>
+                    <td>@rate.Country</td>
+                    <td>@rate.Currency</td>
+                    <td>@rate.MiddleRate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<KursnaLista> exchangeRateList;
+    private string Date = DateTime.Now.ToString("dd.MM.yyyy");
+
+    protected override async Task OnInitializedAsync()
+    {
+        exchangeRateList = await KursnaListaService.GetExchangeRates(Date);
+    }
+}
